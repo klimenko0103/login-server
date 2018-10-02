@@ -12,6 +12,7 @@
     "body-parser": "^1.18.3",
     "crypto": "^1.0.1",
     "express": "^4.16.3",
+    "js-md5": "^0.7.3",
     "jwt-simple": "^0.5.5",
     "md5": "^2.2.1",
     "mongodb": "^3.1.6",
@@ -23,6 +24,10 @@
     "node-models": "^2.1.5",
     "node-modules": "^1.0.1",
     "nodejs-md5": "^1.1.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "router": "^1.3.3"
   }
 }
