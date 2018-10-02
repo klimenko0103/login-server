@@ -1,11 +1,8 @@
 var router = require('express').Router() ;
 
-var crypto = require('crypto');
+var User = require('./user');
 
-
-var User = require('./user')
-
-var auth = require('./auth')
+var auth = require('./auth').auth;
 
 
 /**
@@ -15,17 +12,17 @@ var auth = require('./auth')
  * При удаче - возвращает 201
  */
 router.post('/user', function (req, res, next) {
+    let params = req.body;
     var user = new User({
-        username :req.body.username,
-        age: req.body.age,
-        email : req.body.email,
-        login : req.body.login,
-        password : req.body.password,
+        username :params.username,
+        age: params.age,
+        email : params.email,
+        login : params.login,
+        password : params.password,
     });
 
-    var hash = crypto.createHash('md5').update(req.body.password, 10).digest('hex');
-    // console.log('sadasd', hash)
-    user.password = hash;
+    user.encryptPass(user.password);
+    console.log('userpass',user.password);
 
     user.save(function (err) {
         if (err) {
@@ -51,10 +48,6 @@ router.post('/user', function (req, res, next) {
  */
 router.get('/user', auth, function (req, res, next) {
     console.log(req.auth.login)
-    // console.log('skjnhkjsk');
-    if(!req.headers['x-auth']) {
-        return res.sendStatus(401)
-    }
     User.findOne({login: req.auth.login}, function(err, user) {
         if (err) {
             console.log(err);
@@ -66,5 +59,5 @@ router.get('/user', auth, function (req, res, next) {
     })
 })
 
-module.exports = router
+module.exports = router;
 

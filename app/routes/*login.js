@@ -1,13 +1,11 @@
 
-var router = require('express').Router()
+var router = require('express').Router();
 
-var crypto = require('crypto');
+var jwt = require('jwt-simple');
 
-var jwt = require('jwt-simple')
+var User = require('./user');
 
-var User = require('./user')
-
-var config = require('./config')
+var config = require('./config');
 
 /**
  * Этот модуль имеет единственный метод.
@@ -20,31 +18,38 @@ var config = require('./config')
  */
 
 router.post ('/login', function(req, res, next) {
-    // console.log(req.body)
-    // console.log(user.password)
 
     if (!req.body.login || !req.body.password) {
-        // если один или оба параметра запроса опущены,
-        // возвращаем 400 - Bad Request
         return res.sendStatus(400)
     } else {
-        var login = req.body.login;
-        var password = req.body.password;
-        User.findOne({login: login})
+        let params = req.body;
+        var userAuth = new User({
+            login : params.login,
+            password : params.password,
+        });
+        // console.log(user.password)
+        // userAuth.encryptPass(userAuth.password)
+        // console.log('posthash',userAuth.password)
+
+        User.findOne({login: userAuth.login})
             .select('password')
             .exec(function (err, user) {
                     if (err) {
                         return res.sendStatus(500)
                     }
                     if (!user) {
-                        return res.sendStatus(401)
+                        return res.sendStatus(404)
                     }
-                   if (crypto.createHash('md5').update(password).digest('hex') !== user.password){
-                        return true
-                   };
-                    var token = jwt.encode({login: login}, config.secretkey)
+                    // console.log('bd',user.password)
+                    // console.log('body',userAuth.encryptPass(userAuth.password))
+
+                     if (userAuth.encryptPass(userAuth.password)!== user.password){
+                       return res.sendStatus(401)
+                     }
+
+                    var token = jwt.encode({login: userAuth.login}, config.secretkey);
                     res.send(token)
-                                }
+            }
             )
     }
 })
