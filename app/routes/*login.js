@@ -18,10 +18,11 @@ var config = require('./config');
  */
 
 router.post ('/login', function(req, res, next) {
-
+    // let token = '';
     if (!req.body.login || !req.body.password) {
         return res.sendStatus(400)
     } else {
+
         let params = req.body;
         var userAuth = new User({
             login : params.login,
@@ -42,15 +43,13 @@ router.post ('/login', function(req, res, next) {
                     }
                     // console.log('bd',user.password)
                     // console.log('body',userAuth.encryptPass(userAuth.password))
-
-                     if (userAuth.encryptPass(userAuth.password)!== user.password){
-                       return res.sendStatus(401)
+                     if (userAuth.encryptPass(userAuth.password)=== user.password){
+                         var token = jwt.encode({login: userAuth.login}, config.secretkey);
+                         return res.send(token);
                      }
+                     return res.sendStatus(401)
 
-                    var token = jwt.encode({login: userAuth.login}, config.secretkey);
-                    res.send(token)
-            }
-            )
+            })
     }
 })
 

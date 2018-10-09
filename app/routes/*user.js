@@ -14,19 +14,18 @@ var auth = require('./auth').auth;
 router.post('/user', function (req, res, next) {
     let params = req.body;
     var user = new User({
-        username :params.username,
+        username : params.username,
         age: params.age,
         email : params.email,
         login : params.login,
         password : params.password,
     });
-
+    // console.log('userpass',user.username);
     user.encryptPass(user.password);
     console.log('userpass',user.password);
 
     user.save(function (err) {
         if (err) {
-
             res.sendStatus(500)
         }
         else {
@@ -47,7 +46,7 @@ router.post('/user', function (req, res, next) {
  * При успехе возвращает JSON объекта user (без пароля, естественно)
  */
 router.get('/user', auth, function (req, res, next) {
-    console.log(req.auth.login)
+    console.log('getlogin',req.auth.login)
     User.findOne({login: req.auth.login}, function(err, user) {
         if (err) {
             console.log(err);
